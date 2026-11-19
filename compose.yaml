@@ -1,0 +1,20 @@
+name: finsight-local
+services:
+  db:
+    image: postgres:17-alpine@sha256:979c4379dd698aba0b890599a6104e082035f98ef31d9b9291ec22f2b13059ca
+    environment:
+      POSTGRES_DB: finsight
+      POSTGRES_USER: finsight
+      POSTGRES_PASSWORD: ${FINSIGHT_DB_PASSWORD:?Set FINSIGHT_DB_PASSWORD in .env}
+    ports:
+      - "127.0.0.1:${FINSIGHT_DB_PORT:-55432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U finsight -d finsight"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
